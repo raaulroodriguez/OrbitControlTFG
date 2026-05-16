@@ -1,0 +1,51 @@
+<header class="bg-[var(--primary-600)] border-b border-gray-400 h-14 sm:h-20 px-4 sm:px-8 flex items-center justify-between flex-shrink-0 relative" style="padding-top: env(safe-area-inset-top);"> 
+<div class="flex-1 flex items-center">
+  <button class="xl:hidden text-xl text-white w-2 flex items-center justify-center"
+          (click)="sidebar.toggle()">
+    <i class="fa-solid fa-bars"></i>
+  </button>
+</div>
+
+  <div class="absolute left-1/2 -translate-x-1/2 flex items-center justify-center h-full">
+    <a href="">
+      <img src="/imgs/logos/logoBlanco.png" 
+          alt="Logo" 
+          class="h-16 sm:h-32 w-auto object-contain drop-shadow-md max-w-[160px] sm:max-w-[400px]"
+          (click)="router.navigate(['/'])">
+    </a>
+  </div>
+
+  <div class="relative" id="menu-profile">
+
+  <button (click)="menuProfileOpen.set(!menuProfileOpen())"
+          class="flex items-center gap-2 hover:opacity-80 transition-opacity">
+    <div class="w-7 h-7 sm:w-8 sm:h-8 bg-gray-50 rounded-full flex items-center justify-center">
+      <span class="text-[var(--primary-600)] text-xs font-bold">{{ initial }}</span>
+    </div>
+    <span class="text-sm text-white hidden sm:block font-bold">{{ username }}</span>
+    <i class="fa-solid fa-angle-down text-xs text-white hidden sm:block transition-transform duration-200"
+       [class.rotate-180]="menuProfileOpen()"></i>
+  </button>
+
+  @if (menuProfileOpen()) {
+    <div class="absolute right-0 top-full mt-2 w-52 bg-white rounded-xl shadow-lg border border-gray-100 z-50 overflow-hidden">
+
+      <div class="px-4 py-3 bg-gray-50 border-b border-gray-100">
+        <p class="text-sm font-bold text-slate-800">{{ username }}</p>
+        <p class="text-xs font-medium text-[var(--primary-600)] mt-0.5">
+          <i class="fa-solid fa-circle-user mr-1"></i>{{ rol }}
+        </p>
+      </div>
+
+      <div class="border-t border-gray-100 py-1">
+        <button (click)="auth.logout()"
+                class="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-[var(--error)] hover:bg-red-50 transition-colors">
+          <i class="fa-solid fa-arrow-right-from-bracket w-4 text-center"></i>
+          Cerrar sesión
+        </button>
+      </div>
+
+    </div>
+  }
+</div>
+</header>

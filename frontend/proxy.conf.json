@@ -1,0 +1,8 @@
+{
+  "/api": {
+    "target": "https://api-tfg.orbitcontrol.es",
+    "secure": true,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  }
+}

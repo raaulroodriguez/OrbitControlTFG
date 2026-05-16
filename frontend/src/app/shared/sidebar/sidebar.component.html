@@ -1,0 +1,124 @@
+@if (sidebar.isOpen()) {
+      <div
+         class="bg-black opacity-30 fixed inset-0 z-20 xl:hidden"
+         (click)="sidebar.toggle()"
+      ></div>
+   }
+<aside class="w-64 bg-[var(--primary-600)] fixed top-0 left-0 z-30 transition-transform duration-500 xl:relative xl:translate-x-0 h-screen xl:h-full flex flex-col"
+   [class.-translate-x-full]="!sidebar.isOpen()"
+   [class.translate-x-0]="sidebar.isOpen()">
+
+  <div class="flex items-center justify-center h-20 px-5 py-2 border-b border-gray-400">
+    <img src="/imgs/logos/iconoBlanco.png" 
+         alt="Logo" 
+         class="h-full w-auto object-contain mx-auto">
+      <button
+      class="xl:hidden absolute right-3 top-1 text-2xl text-white"
+      (click)="sidebar.toggle()"
+      ><i class="fa-solid fa-xmark"></i></button>
+  </div>
+
+  <nav class="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
+
+    <a routerLink="/" [routerLinkActiveOptions]="{exact: true}" routerLinkActive="bg-[var(--primary-800)] text-[var(--gray-100)]"
+       class="flex items-center gap-3 px-3 py-3 rounded-lg text-gray-200 hover:bg-[var(--primary-500)] transition-colors text-sm font-medium">
+       <i class="fa-solid fa-house"></i> Inicio
+    </a>
+
+    <app-nav-item
+      icon="fa-solid fa-box-archive"
+      text="Almacén"
+      [isOpen]="almacenOpen()"
+      (toggle)="almacenOpen.set(!almacenOpen())"/>
+
+      @if (almacenOpen()) {
+         <div class="ml-2 pl-2 space-y-0.5">
+            <app-nav-sub-item icon="fa-solid fa-magnifying-glass" text="Gestionar Almacén" route="/almacen/gestion" />
+            @if (auth.hasRole('ROLE_ADMIN', 'ROLE_ENCARGADO')) {
+              <app-nav-sub-item icon="fa-solid fa-arrow-down" text="Consumir Productos" route="/almacen/consumir" />
+              <app-nav-sub-item icon="fa-solid fa-plus" text="Nuevo Producto" route="/almacen/nuevo" />
+            }
+            <app-nav-sub-item icon="fa-solid fa-triangle-exclamation" text="Alertas de Stock" route="/almacen/alertas" />
+         </div>
+      }
+
+    <app-nav-item
+      icon="fa-solid fa-clipboard-list"
+      text="Obrador"
+      [isOpen]="obradorOpen()"
+      (toggle)="obradorOpen.set(!obradorOpen())"/>
+
+      @if (obradorOpen()) {
+         <div class="ml-2 pl-2 space-y-0.5">
+            <app-nav-sub-item icon="fa-solid fa-magnifying-glass" text="Consultar Stock" route="/obrador/stock" />
+            @if (auth.hasRole('ROLE_ADMIN', 'ROLE_HELADERO')) {
+              <app-nav-sub-item icon="fa-solid fa-arrow-down" text="Consumir Helados" route="/obrador/consumir" />
+              <app-nav-sub-item icon="fa-solid fa-plus" text="Elaborar Productos" route="/obrador/elaborar" />
+            }
+            <app-nav-sub-item icon="fa-solid fa-triangle-exclamation" text="Alertas de Stock" route="/obrador/alertas" />
+            @if (auth.hasRole('ROLE_ADMIN', 'ROLE_HELADERO')) {
+              <app-nav-sub-item icon="fa-solid fa-book" text="Gestionar Recetas" route="/obrador/recetas" />
+              <app-nav-sub-item icon="fa-solid fa-file-circle-plus" text="Nueva Receta" route="/obrador/recetas/nueva" />
+            }
+         </div>
+      }
+
+    <app-nav-item
+      icon="fa-solid fa-cart-shopping"
+      text="Pedidos"
+      [isOpen]="pedidosOpen()"
+      (toggle)="pedidosOpen.set(!pedidosOpen())"/>
+
+      @if (pedidosOpen()) {
+         <div class="ml-2 pl-2 space-y-0.5">
+            <app-nav-sub-item icon="fa-solid fa-clock" text="Pedidos Pendientes" route="/pedidos/pendientes" />
+            @if (auth.hasRole('ROLE_ADMIN', 'ROLE_ENCARGADO')) {
+              <app-nav-sub-item icon="fa-solid fa-plus" text="Nuevo Pedido" route="/pedidos/nuevo" />
+              <app-nav-sub-item icon="fa-solid fa-file-lines" text="Plantillas de Pedidos" route="/pedidos/plantillas" />
+            }
+            <app-nav-sub-item icon="fa-solid fa-clock-rotate-left" text="Historial de Pedidos" route="/pedidos/historial" />
+         </div>
+      }
+
+    @if (auth.hasRole('ROLE_ADMIN', 'ROLE_ENCARGADO')) {
+      <app-nav-item
+      icon="fa-solid fa-truck-moving"
+      text="Proveedores"
+      [isOpen]="proveedoresOpen()"
+      (toggle)="proveedoresOpen.set(!proveedoresOpen())"/>
+
+      @if (proveedoresOpen()) {
+         <div class="ml-2 pl-2 space-y-0.5">
+            <app-nav-sub-item icon="fa-solid fa-sliders" text="Gestionar Proveedores" route="/proveedores/gestion" />
+            <app-nav-sub-item icon="fa-solid fa-plus" text="Nuevo Proveedor" route="/proveedores/nuevo" />
+         </div>
+      }
+    }
+
+    @if (auth.hasRole('ROLE_ADMIN')) {
+      <app-nav-item
+      icon="fa-solid fa-users"
+      text="Usuarios"
+      [isOpen]="usuariosOpen()"
+      (toggle)="usuariosOpen.set(!usuariosOpen())"/>
+
+      @if (usuariosOpen()) {
+         <div class="ml-2 pl-2 space-y-0.5">
+            <app-nav-sub-item icon="fa-solid fa-sliders" text="Gestionar Usuarios" route="/usuarios/gestion" />
+            <app-nav-sub-item icon="fa-solid fa-user-plus" text="Nuevo Usuario" route="/usuarios/nuevo" />
+         </div>
+      }
+    }
+
+  </nav>
+
+  <div class="px-3 py-4">
+
+    <button (click)="auth.logout()"
+            class="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-[var(--gray-200)] hover:bg-[var(--error)] hover:text-white transition-all text-sm font-bold group">
+      <i class="fa-solid fa-arrow-right-from-bracket w-5 text-center group-hover:translate-x-1 transition-transform"></i> 
+      Cerrar sesión
+    </button>
+  </div>
+
+</aside>

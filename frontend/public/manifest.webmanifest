@@ -1,0 +1,24 @@
+{
+  "name": "OrbitControl",
+  "short_name": "OrbitControl",
+  "description": "Gestión integral de heladería",
+  "theme_color": "#7C3AED",
+  "background_color": "#FFFFFF",
+  "display": "standalone",
+  "scope": "/",
+  "start_url": "/",
+  "icons": [
+    {
+      "src": "imgs/logos/iconoSinFondo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "imgs/logos/iconoSinFondo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
