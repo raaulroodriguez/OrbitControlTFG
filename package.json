@@ -16,6 +16,7 @@
         "build:front": "npm run build --prefix frontend",
         "build:back": "./mvnw package -DskipTests",
         "clean": "cd frontend && rm -rf dist && cd .. && ./mvnw clean",
+        "clean-install": "rm -rf node_modules frontend/node_modules && ./mvnw dependency:purge-local-repository -DreResolve=false --no-transfer-progress && npm install && npm install --prefix frontend",
         "// --- BASE DE DATOS LOCAL ---": "",
         "db:connect": "mysql -u root -p12345678 orbitcontrolbd",
         "db:dump": "mysqldump -u root -p12345678 orbitcontrolbd > backup_%date:~6,4%-%date:~3,2%-%date:~0,2%.sql",
