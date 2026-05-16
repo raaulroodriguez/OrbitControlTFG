@@ -1,202 +1,166 @@
-<h1 align="center">
-  <br>
-  🌐 OrbitControl
-  <br>
-</h1>
+﻿# OrbitControl 🍦
 
-<p align="center">
-  Sistema de gestión integral para negocios y obradores
-</p>
+> **"Mantén tu negocio en órbita"**
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Java-21-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white" alt="Java" />
-  <img src="https://img.shields.io/badge/Spring_Boot-3.4.2-6DB33F?style=for-the-badge&logo=springboot&logoColor=white" alt="Spring Boot" />
-  <img src="https://img.shields.io/badge/Angular-21-DD0031?style=for-the-badge&logo=angular&logoColor=white" alt="Angular" />
-  <img src="https://img.shields.io/badge/TailwindCSS-4.x-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white" alt="Tailwind" />
-  <img src="https://img.shields.io/badge/H2-Database-darkblue?style=for-the-badge&logo=h2&logoColor=white" alt="H2" />
-</p>
+Sistema SaaS de gestión integral para heladerías artesanales, desarrollado como Trabajo de Fin de Grado del ciclo **Técnico Superior en Desarrollo de Aplicaciones Web (DAW)** en el IES Belén de Málaga — curso 2025/2026.
 
-<p align="center">
-  <img src="https://img.shields.io/badge/estado-en%20desarrollo-yellow?style=for-the-badge" alt="Estado" />
-  <img src="https://img.shields.io/badge/licencia-MIT-blue?style=for-the-badge" alt="Licencia" />
-</p>
+**Autor:** Raúl Rodríguez Aponte
 
 ---
 
-## 📋 Descripción
+## ¿Qué es OrbitControl?
 
-**OrbitControl** es una aplicación web full-stack para la gestión integral de negocios con obrador.
-Permite controlar el inventario, la producción, los pedidos a proveedores y la gestión de usuarios desde una interfaz moderna y responsive.
+OrbitControl nace de la necesidad real de digitalizar la gestión de una heladería artesanal. La mayoría de estos negocios siguen usando hojas de cálculo, cuadernos en papel o herramientas genéricas que no están pensadas para este sector.
 
----
+La aplicación centraliza en un único lugar todos los procesos operativos: el obrador, el almacén, los pedidos a proveedores, los turnos del personal y la gestión de usuarios. Al estar interconectados, una acción en un módulo repercute automáticamente en los demás — por ejemplo, registrar una producción en el obrador descuenta los ingredientes del almacén de forma automática.
 
-## 🚀 Tecnologías
-
-<table>
-<tr>
-<td valign="top" width="50%">
-
-### ☕ Backend
-| Tecnología | Versión |
-|---|---|
-| Java | 21 |
-| Spring Boot | 3.4.2 |
-| Spring Security + JWT | JJWT 0.12.5 |
-| Spring Data JPA | — |
-| Lombok | — |
-| MapStruct | 1.6.3 |
-| MySQL | 8.0+ |
-| Maven | — |
-
-</td>
-<td valign="top" width="50%">
-
-### 🅰️ Frontend
-| Tecnología | Versión |
-|---|---|
-| Angular | 21.1.0 |
-| TailwindCSS | 4.x |
-| TypeScript | 5.9.2 |
-| RxJS | 7.8.0 |
-| Angular SSR | — |
-
-</td>
-</tr>
-</table>
+Funciona como **SaaS**: el cliente accede desde cualquier navegador sin instalar nada, y está empaquetada como **PWA** para poder instalarla en cualquier dispositivo como si fuera una app nativa.
 
 ---
 
-## 📁 Estructura del proyecto
+## Stack tecnológico
+
+| Capa | Tecnología | Versión |
+|------|-----------|---------|
+| Frontend | Angular (standalone components) | 21 |
+| Estilos | Tailwind CSS | 4 |
+| Backend | Spring Boot + Java | 3 / 21 LTS |
+| Seguridad | Spring Security + JWT | — |
+| Base de datos | MySQL | 8.0 |
+| ORM | Spring Data JPA + Hibernate | — |
+| Mapeo DTOs | MapStruct | — |
+| Hosting frontend | Vercel (CDN global) | — |
+| Hosting backend | Hetzner CX43 (Ubuntu 24.04) | — |
+| Proxy | Nginx + SSL (Let's Encrypt) | — |
+| CI/CD | GitHub Actions | — |
+
+---
+
+## Módulos
+
+- **Almacén** — CRUD de productos con stock actual, mínimo, unidad de medida y proveedor. Búsqueda paginada, filtros por tipo y alertas automáticas cuando el stock baja del mínimo.
+- **Proveedores** — Alta, edición y eliminación. Cada producto se asocia a su proveedor. Vista de detalle con sus productos.
+- **Pedidos** — Crear pedidos a proveedores con estados `BORRADOR → PENDIENTE → RECIBIDO`. Plantillas reutilizables, cálculo de coste total en tiempo real e historial completo.
+- **Obrador** — Elaboración de helados por lotes (BARQUETA / PALETA). Descuento automático de stock de ingredientes. Dashboard de movimientos agrupados por helado y fecha.
+- **Recetas** — Gestión de recetas con ingredientes (productos o subrecetas). Coste calculado automáticamente según el precio de cada ingrediente. Rendimiento por kg/L.
+- **Jornadas** — Fichaje por PIN o tarjeta NFC/RFID. Plantillas de turnos, historial de jornadas del personal y gestión de turnos.
+- **Usuarios** — Alta con roles: `ADMIN`, `ENCARGADO`, `HELADERO`, `DEPENDIENTE`. Login por selector + PIN o tarjeta NFC. JWT con roles y claims personalizados.
+- **Dashboard** — Cards con últimos movimientos del obrador, pedidos recientes y productos con stock crítico. Botón para enviar alertas push a encargados y administradores.
+
+---
+
+## Autenticación y roles
+
+OrbitControl tiene dos métodos de acceso:
+
+- **PIN numérico** — Acceso de solo lectura para cualquier rol. El admin con PIN también puede escribir.
+- **Tarjeta NFC/RFID** — Acceso completo de escritura para cualquier rol. Diseñado para empleados del obrador que trabajan con las manos ocupadas.
+
+Si un usuario con sesión PIN intenta realizar una acción de escritura, la aplicación muestra un modal para acercar la tarjeta NFC y escala los permisos sin cerrar la sesión.
+
+| Rol | Nivel | Acceso |
+|-----|-------|--------|
+| ADMIN | 1 | Total — gestión de usuarios, configuración y todas las secciones |
+| ENCARGADO | 2 | Pedidos, almacén, proveedores, obrador y jornadas |
+| HELADERO | 3 | Obrador, recetas y consulta de stock |
+| DEPENDIENTE | 3 | Consulta de stock y recepción de pedidos |
+
+---
+
+## Arquitectura
+
+```
+Navegador / PWA
+      │
+      ▼
+Vercel CDN  (tfg.orbitcontrol.es)
+Angular 21 — build estático
+vercel.json: /api/* → api-tfg.orbitcontrol.es
+      │
+      ▼
+Nginx (Hetzner CX43)
+Reverse proxy + SSL (Let's Encrypt)
+Puerto 443 → localhost:8085
+      │
+      ▼
+Spring Boot  (perfil: tfg)
+Puerto 8085 — API REST + JWT
+      │
+      ▼
+MySQL 8.0 — orbitcontroltfgbd (15 tablas)
+```
+
+---
+
+## Entornos
+
+| Entorno | Frontend | API |
+|---------|----------|-----|
+| TFG | https://tfg.orbitcontrol.es | https://api-tfg.orbitcontrol.es |
+| Dev | https://dev.orbitcontrol.es | https://api-dev.orbitcontrol.es |
+| Local | http://localhost:4200 | http://localhost:8080 (perfil dev → BD remota) |
+
+---
+
+## Instalación en local
+
+### Requisitos previos
+
+- Java 21 (OpenJDK)
+- Node.js 20+
+- Maven
+- Angular CLI 21
+
+> **No hace falta MySQL en local.** El backend arranca con el perfil `dev` que conecta directamente a la base de datos remota.
+
+### Pasos
+
+```bash
+# Clonar el repositorio
+git clone https://github.com/raaulroodriguez/OrbitControlTFG.git
+cd OrbitControlTFG
+
+# Instalar dependencias del frontend
+cd frontend && npm install && cd ..
+
+# Arrancar frontend y backend simultáneamente
+npm run dev
+```
+
+| Comando | Descripción |
+|---------|-------------|
+| `npm run dev` | Frontend + backend simultáneamente |
+| `npm run front` | Solo el frontend en localhost:4200 |
+| `npm run back` | Solo el backend en localhost:8080 |
+| `npm run deploy:tfg` | Build + subida al servidor TFG |
+| `npm run logs:tfg` | Logs en tiempo real del servidor TFG |
+
+---
+
+## Estructura del proyecto
 
 ```
 OrbitControl/
-├── backend/                        # Spring Boot API REST
-│   └── src/main/java/rra/orbitcontrol/
-│       ├── config/                 # SecurityConfig, CORS, JWT, DataInitializer
-│       ├── controllers/            # Endpoints REST
-│       ├── models/
-│       │   ├── entities/           # Pedido, Usuario, Proveedor, Producto...
-│       │   ├── dtos/               # Data Transfer Objects
-│       │   └── mappers/            # MapStruct mappers
-│       ├── repositories/           # Spring Data JPA
-│       └── services/               # Lógica de negocio
-├── frontend/                       # Angular SPA
+├── frontend/                        # Angular 21
 │   └── src/app/
-│       ├── core/
-│       │   ├── guards/             # Auth guard
-│       │   ├── interceptors/       # JWT interceptor
-│       │   ├── models/             # Interfaces TypeScript
-│       │   └── services/           # HTTP services, AuthService, SidebarService
-│       ├── features/               # Módulos por funcionalidad
-│       │   ├── auth/               # Login
-│       │   ├── dashboard/          # Página principal
-│       │   ├── pedidos/
-│       │   ├── proveedores/
-│       │   ├── usuarios/
-│       │   ├── helados/
-│       │   └── productos/
-│       └── shared/                 # Componentes reutilizables
-│           ├── navbar/
-│           ├── sidebar/
-│           ├── footer/
-│           ├── dashboard-card/
-│           └── button/
-└── pom.xml                         # POM raíz (multi-módulo)
+│       ├── core/                    # Guards, interceptores, servicios base
+│       ├── features/                # Módulos (almacén, pedidos, obrador…)
+│       └── shared/                  # Componentes reutilizables
+├── backend/                         # Spring Boot 3
+│   └── src/main/java/rra/orbitcontrol/
+│       ├── config/                  # SecurityConfig, JWT, CORS
+│       ├── controllers/             # Endpoints REST
+│       ├── services/                # Lógica de negocio
+│       ├── repositories/            # Spring Data JPA
+│       ├── models/
+│       │   ├── entities/            # @Entity — tablas JPA
+│       │   ├── dtos/                # Request / Response DTOs
+│       │   └── enums/               # TipoProducto, RolNombre…
+│       ├── mappers/                 # MapStruct entity ↔ DTO
+│       └── exceptions/              # GlobalExceptionHandler
+└── package.json                     # Scripts centralizados
 ```
 
 ---
 
-## ⚙️ Requisitos previos
-
-| Herramienta | Versión mínima |
-|---|---|
-| Java | 21 |
-| Node.js | 18+ |
-| npm | incluido con Node |
-| MySQL | 8.0+ |
-| Angular CLI | última estable |
-
-```bash
-# Instalar Angular CLI globalmente
-npm install -g @angular/cli
-```
-
----
-
-## 🛠️ Instalación y arranque
-
-### 1️⃣ Base de datos
-
-```sql
-CREATE DATABASE orbitcontrolbd CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-```
-
-### 2️⃣ Variables de entorno
-
-Crea el fichero `backend/src/main/resources/application-local.properties` *(excluido de git)*:
-
-```properties
-spring.datasource.url=jdbc:mysql://localhost:3306/orbitcontrolbd
-spring.datasource.username=tu_usuario
-spring.datasource.password=tu_contraseña
-jwt.secret=tu_secreto_base64
-```
-
-### 3️⃣ Backend
-
-```bash
-cd backend
-./mvnw spring-boot:run
-```
-
-> 🟢 API disponible en `http://localhost:8080`
-> Hibernate crea/actualiza las tablas automáticamente.
-> El `DataInitializer` inserta datos de prueba si la BD está vacía.
-
-### 4️⃣ Frontend
-
-```bash
-cd frontend
-npm install
-ng serve
-```
-
-> 🟢 App disponible en `http://localhost:4200`
-
----
-
-## 👤 Usuarios de prueba
-
-| Usuario | Contraseña | Rol |
-|---|---|---|
-| `admin` | `admin123!` | Administrador |
-| `encargado` | `encargado1234` | Encargado |
-| `dependiente` | `dependiente1234` | Dependiente |
-| `heladero` | `heladero1234` | Heladero |
-
----
-
-## 🔐 Roles y permisos
-
-| Rol | Acceso |
-|---|---|
-| `ROLE_ADMIN` | Acceso total |
-| `ROLE_ENCARGADO` | Pedidos, proveedores, inventario |
-| `ROLE_DEPENDIENTE` | Consulta y registro de jornada |
-| `ROLE_HELADERO` | Obrador y elaboración |
-
----
-
-## ✨ Funcionalidades principales
-
-| Módulo | Descripción |
-|---|---|
-| 🔑 **Autenticación** | Login con JWT — tokens de 24 h de validez |
-| 📊 **Dashboard** | Tarjetas de resumen con accesos rápidos por módulo |
-| 📦 **Pedidos** | Seguimiento de estado y fechas de entrega a proveedores |
-| 🗃️ **Inventario** | Gestión de materias primas y productos del almacén |
-| 🧁 **Obrador** | Control de elaboraciones y consumo de ingredientes |
-| 🏢 **Proveedores** | Ficha con historial de pedidos y compras |
-| 👥 **Usuarios** | Gestión de roles y registro de jornada laboral |
-| 📱 **Responsive** | Sidebar con menús desplegables adaptado a móvil y escritorio |
-| 🛡️ **Seguridad** | Control de acceso por rol en frontend y backend |
+IES Belén · Málaga · DAW 2025/2026
