@@ -37,9 +37,6 @@ frontend/.vscode/
 node_modules/
 frontend/package-lock.json
 
-### Claude Code ###
-.claude/
-
 ### Environment & Secrets ###
 .env
 .env.*
