@@ -47,9 +47,6 @@ application-prod.properties
 *firebase-service-account.json
 *firebase-adminsdk*.json
 
-### Docs ###
-*.pdf
-
 ### Logs ###
 *.log
 logs/
